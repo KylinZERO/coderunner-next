@@ -1,0 +1,11 @@
+node_modules/
+.next/
+*.db
+*.db-journal
+.env
+.env.local
+*.log
+.DS_Store
+
+.vercel
+.claude

@@ -1,0 +1,71 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  name      String
+  email     String        @unique
+  password  String
+  role      String        @default("STUDENT")
+  createdAt DateTime      @default(now())
+  submissions Submission[]
+}
+
+model Problem {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String
+  language     String       @default("python")
+  difficulty   String       @default("EASY")
+  templateCode String       @default("")
+  timeLimit    Int          @default(5)
+  isPublished  Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  testCases    TestCase[]
+  submissions  Submission[]
+}
+
+model TestCase {
+  id             Int          @id @default(autoincrement())
+  problemId      Int
+  input          String
+  expectedOutput String
+  isSample       Boolean      @default(false)
+  order          Int          @default(0)
+  problem        Problem      @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  testResults    TestResult[]
+}
+
+model Submission {
+  id          Int          @id @default(autoincrement())
+  userId      Int
+  problemId   Int
+  code        String
+  language    String
+  status      String       @default("PENDING")
+  score       Float?
+  createdAt   DateTime     @default(now())
+  user        User         @relation(fields: [userId], references: [id])
+  problem     Problem      @relation(fields: [problemId], references: [id])
+  testResults TestResult[]
+}
+
+model TestResult {
+  id            Int        @id @default(autoincrement())
+  submissionId  Int
+  testCaseId    Int
+  passed        Boolean
+  actualOutput  String     @default("")
+  errorMessage  String     @default("")
+  executionTime Int?
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  testCase      TestCase   @relation(fields: [testCaseId], references: [id])
+}
