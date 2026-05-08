@@ -44,13 +44,23 @@ export default function Navbar() {
 
   if (loading || !user) return null
 
+  const linkClass = (path: string) =>
+    `text-sm ${pathname === path ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'} transition`
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-14 items-center">
-          <Link href="/problems" className="text-xl font-bold text-blue-600">
-            CodeRunner
-          </Link>
+          <div className="flex items-center gap-8">
+            <Link href="/dashboard" className="text-xl font-bold text-blue-600">
+              CodeRunner
+            </Link>
+            <div className="hidden sm:flex items-center gap-6">
+              <Link href="/dashboard" className={linkClass('/dashboard')}>Dashboard</Link>
+              <Link href="/problems" className={linkClass('/problems')}>Problems</Link>
+              <Link href="/submissions" className={linkClass('/submissions')}>Submissions</Link>
+            </div>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">
               {user.name} ({user.role.toLowerCase()})
