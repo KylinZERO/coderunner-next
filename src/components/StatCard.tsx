@@ -6,9 +6,9 @@ interface StatCardProps {
 }
 
 const colorConfig = {
-  blue: { bg: 'bg-blue-50 text-blue-600', ring: 'ring-blue-500' },
-  green: { bg: 'bg-green-50 text-green-600', ring: 'ring-green-500' },
-  amber: { bg: 'bg-amber-50 text-amber-600', ring: 'ring-amber-500' },
+  blue: { bg: 'bg-blue-50 text-blue-600' },
+  green: { bg: 'bg-green-50 text-green-600' },
+  amber: { bg: 'bg-amber-50 text-amber-600' },
 }
 
 const icons = {
@@ -34,7 +34,7 @@ export default function StatCard({ title, value, subtitle, color }: StatCardProp
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-start gap-4">
-        <div className={`w-10 h-10 rounded-lg ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
+        <div className={`w-10 h-10 rounded-full ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
           {icons[color]}
         </div>
         <div className="min-w-0">

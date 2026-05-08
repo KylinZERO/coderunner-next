@@ -26,7 +26,11 @@ export async function GET(request: NextRequest) {
       where: { userId: auth.userId },
       orderBy: { createdAt: 'desc' },
       take: 5,
-      include: {
+      select: {
+        id: true,
+        score: true,
+        status: true,
+        createdAt: true,
         problem: { select: { id: true, title: true } },
       },
     })

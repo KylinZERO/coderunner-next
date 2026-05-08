@@ -13,10 +13,13 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20')))
     const problemId = searchParams.get('problemId')
-
     const where: any = { userId: auth.userId }
     if (problemId) {
-      where.problemId = parseInt(problemId)
+      const parsed = parseInt(problemId)
+      if (isNaN(parsed)) {
+        return NextResponse.json({ error: 'Invalid problem ID' }, { status: 400 })
+      }
+      where.problemId = parsed
     }
 
     const [submissions, total] = await Promise.all([
