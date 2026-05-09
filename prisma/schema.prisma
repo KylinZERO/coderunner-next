@@ -29,6 +29,7 @@ model Problem {
   isPublished  Boolean      @default(true)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  tags         String?      @default("")
   testCases    TestCase[]
   submissions  Submission[]
 }
@@ -52,6 +53,8 @@ model Submission {
   language    String
   status      String       @default("PENDING")
   score       Float?
+  feedback    String?
+  reviewedBy  Int?
   createdAt   DateTime     @default(now())
   user        User         @relation(fields: [userId], references: [id])
   problem     Problem      @relation(fields: [problemId], references: [id])

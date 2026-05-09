@@ -25,6 +25,17 @@ async function main() {
   })
   console.log(`  Created student: ${student.email}`)
 
+  // Create teacher account
+  const teacher = await prisma.user.create({
+    data: {
+      name: 'Test Teacher',
+      email: 'teacher@test.com',
+      password: hashedPassword,
+      role: 'TEACHER',
+    },
+  })
+  console.log(`  Created teacher: ${teacher.email}`)
+
   // Create Problem 1: Two Sum
   const problem1 = await prisma.problem.create({
     data: {
@@ -121,6 +132,7 @@ if __name__ == "__main__":
 
   console.log('\nSeed completed!')
   console.log('  Student login: student@test.com / password123')
+  console.log('  Teacher login: teacher@test.com / password123')
 }
 
 main()
