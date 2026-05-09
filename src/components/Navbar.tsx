@@ -60,7 +60,7 @@ export default function Navbar() {
               <Link href="/problems" className={linkClass('/problems')}>Problems</Link>
               <Link href="/submissions" className={linkClass('/submissions')}>Submissions</Link>
               {user.role === 'TEACHER' && (
-                <Link href="/teacher/dashboard" className={linkClass('/teacher/dashboard')}>
+                <Link href="/teacher/dashboard" className={`text-sm ${pathname.startsWith('/teacher') ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'} transition`}>
                   Teacher Panel
                 </Link>
               )}
