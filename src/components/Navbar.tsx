@@ -59,6 +59,11 @@ export default function Navbar() {
               <Link href="/dashboard" className={linkClass('/dashboard')}>Dashboard</Link>
               <Link href="/problems" className={linkClass('/problems')}>Problems</Link>
               <Link href="/submissions" className={linkClass('/submissions')}>Submissions</Link>
+              {user.role === 'TEACHER' && (
+                <Link href="/teacher/dashboard" className={linkClass('/teacher/dashboard')}>
+                  Teacher Panel
+                </Link>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-4">
