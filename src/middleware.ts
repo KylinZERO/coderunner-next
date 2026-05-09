@@ -19,11 +19,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Protect teacher routes - require authentication
+  if (pathname.startsWith('/teacher')) {
+    const token = request.cookies.get('token')?.value ||
+      request.headers.get('authorization')?.slice(7)
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
+  }
+
   // Protect page routes - redirect to login if no token
   const token = request.cookies.get('token')?.value ||
     request.headers.get('authorization')?.slice(7)
 
-  if (!token && (pathname.startsWith('/problems') || pathname.startsWith('/submissions'))) {
+  if (!token && (pathname.startsWith('/problems') || pathname.startsWith('/submissions') || pathname.startsWith('/dashboard'))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
