@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const publicPaths = ['/login', '/register']
-const apiPaths = ['/api/']
+const protectedPaths = ['/problems', '/submissions', '/dashboard', '/teacher']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -14,13 +14,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // API routes handle their own auth - pass through
-  if (apiPaths.some(p => pathname.startsWith(p))) {
-    return NextResponse.next()
-  }
-
-  // Protect teacher routes - require authentication
-  if (pathname.startsWith('/teacher')) {
+  // Protect page routes - redirect to login if no token
+  if (protectedPaths.some(p => pathname.startsWith(p))) {
     const token = request.cookies.get('token')?.value ||
       request.headers.get('authorization')?.slice(7)
     if (!token) {
@@ -29,17 +24,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Protect page routes - redirect to login if no token
-  const token = request.cookies.get('token')?.value ||
-    request.headers.get('authorization')?.slice(7)
-
-  if (!token && (pathname.startsWith('/problems') || pathname.startsWith('/submissions') || pathname.startsWith('/dashboard'))) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|favicon.ico).*)'],
 }
