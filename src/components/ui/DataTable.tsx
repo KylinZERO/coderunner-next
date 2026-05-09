@@ -2,7 +2,6 @@ interface Column<T> {
   key: string
   header: string
   render?: (item: T) => React.ReactNode
-  sortable?: boolean
 }
 
 interface DataTableProps<T> {
