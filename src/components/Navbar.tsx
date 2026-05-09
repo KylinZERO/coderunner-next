@@ -11,13 +11,22 @@ interface User {
   role: string
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  user?: User | null
+}
+
+export default function Navbar({ user: propUser }: NavbarProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [localUser, setLocalUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(!propUser)
 
   useEffect(() => {
+    if (propUser) {
+      setLoading(false)
+      return
+    }
+
     const token = localStorage.getItem('token')
     if (!token) {
       setLoading(false)
@@ -29,16 +38,18 @@ export default function Navbar() {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.user) setUser(data.user)
+        if (data.user) setLocalUser(data.user)
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [pathname])
+  }, [pathname, propUser])
+
+  const user = propUser || localUser
 
   function handleLogout() {
     localStorage.removeItem('token')
     document.cookie = 'token=; path=/; max-age=0'
-    setUser(null)
+    setLocalUser(null)
     router.push('/login')
   }
 
