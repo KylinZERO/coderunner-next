@@ -167,6 +167,9 @@ export default function TeacherProblemsPage() {
 
   return (
     <div>
+      <Link href="/teacher/dashboard" className="text-gray-400 hover:text-gray-600 transition mb-4 block text-sm">
+        ← Back to Dashboard
+      </Link>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Problems</h1>
         <Link

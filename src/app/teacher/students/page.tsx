@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import DataTable from '@/components/ui/DataTable'
 
 interface Student {
@@ -92,6 +93,9 @@ export default function TeacherStudentsPage() {
 
   return (
     <div>
+      <Link href="/teacher/dashboard" className="text-gray-400 hover:text-gray-600 transition mb-4 block text-sm">
+        ← Back to Dashboard
+      </Link>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Students</h1>
         <p className="text-gray-500 mt-1">View and manage enrolled students</p>

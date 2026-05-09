@@ -3,6 +3,7 @@ interface StatCardProps {
   value: string | number
   subtitle: string
   color: 'blue' | 'green' | 'amber'
+  onClick?: () => void
 }
 
 const colorConfig = {
@@ -29,10 +30,16 @@ const icons = {
   ),
 }
 
-export default function StatCard({ title, value, subtitle, color }: StatCardProps) {
+export default function StatCard({ title, value, subtitle, color, onClick }: StatCardProps) {
   const cfg = colorConfig[color]
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5">
+    <div
+      className={`bg-white rounded-xl border border-gray-200 p-5 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') onClick() } : undefined}
+    >
       <div className="flex items-start gap-4">
         <div className={`w-10 h-10 rounded-full ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
           {icons[color]}

@@ -106,25 +106,28 @@ export default function TeacherDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Stat Cards */}
+      {/* Navigation Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Problems"
           value={stats.totalProblems}
-          subtitle="Problems in system"
+          subtitle="Click to manage"
           color="blue"
+          onClick={() => router.push('/teacher/problems')}
         />
         <StatCard
           title="Total Students"
           value={stats.totalStudents}
-          subtitle="Enrolled students"
+          subtitle="Click to view"
           color="green"
+          onClick={() => router.push('/teacher/students')}
         />
         <StatCard
           title="Total Submissions"
           value={stats.totalSubmissions}
-          subtitle="All time submissions"
+          subtitle="Click to review"
           color="amber"
+          onClick={() => router.push('/teacher/submissions')}
         />
         <StatCard
           title="Today's Submissions"
