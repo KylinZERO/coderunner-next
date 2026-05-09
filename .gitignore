@@ -4,6 +4,8 @@ node_modules/
 *.db-journal
 .env
 .env.local
+.env.production
+.env.vercel
 *.log
 .DS_Store
 
