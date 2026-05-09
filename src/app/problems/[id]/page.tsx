@@ -51,14 +51,10 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
+    const headers: Record<string, string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
 
-    fetch(`/api/problems/${params.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(`/api/problems/${params.id}`, { headers })
       .then(res => {
         if (!res.ok) throw new Error('Failed to load problem')
         return res.json()
@@ -69,7 +65,7 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
-  }, [params.id, router])
+  }, [params.id])
 
   // Warn before leaving with unsaved code
   useEffect(() => {
@@ -86,9 +82,18 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
     setHasUnsaved(true)
   }, [])
 
-  async function handleRun() {
+  function requireAuth() {
     const token = localStorage.getItem('token')
-    if (!token) return
+    if (!token) {
+      router.push(`/login?redirect=/problems/${params.id}`)
+      return false
+    }
+    return true
+  }
+
+  async function handleRun() {
+    if (!requireAuth()) return
+    const token = localStorage.getItem('token')
 
     setRunning(true)
     setResults([])
@@ -115,8 +120,8 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
   }
 
   async function handleSubmit() {
+    if (!requireAuth()) return
     const token = localStorage.getItem('token')
-    if (!token) return
 
     setSubmitting(true)
     setResults([])
@@ -171,6 +176,7 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
   if (!problem) return null
 
   const passedTests = results.filter(r => r.passed).length
+  const isGuest = !localStorage.getItem('token')
 
   return (
     <div>
@@ -206,7 +212,6 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
               </div>
             </div>
 
-            {/* Sample Test Cases */}
             {problem.testCases.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">Sample Test Cases</h2>
@@ -234,7 +239,6 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
               </div>
             )}
 
-            {/* Tips */}
             <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 text-sm text-blue-700">
               <strong>Tips:</strong> Use <strong>Run</strong> to test your code against sample test cases.
               Use <strong>Submit</strong> to officially submit and receive your score including hidden tests.
@@ -249,22 +253,47 @@ export default function ProblemDetailPage({ params }: { params: { id: string } }
               language={problem.language}
             />
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleRun}
-                disabled={running || submitting}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {running ? 'Running...' : '▶ Run'}
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={running || submitting}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? 'Submitting...' : '↑ Submit'}
-              </button>
-            </div>
+            {isGuest ? (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+                <p className="text-amber-800 font-medium mb-2">Sign in to run and submit code</p>
+                <p className="text-amber-700 text-sm mb-4">
+                  You can view the problem description and test cases, but running code and submitting requires an account.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={() => router.push(`/login?redirect=/problems/${params.id}`)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition"
+                  >
+                    Sign in
+                  </button>
+                  <button
+                    onClick={() => router.push(`/register?redirect=/problems/${params.id}`)}
+                    className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-5 py-2 rounded-lg text-sm transition"
+                  >
+                    Register
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleRun}
+                    disabled={running || submitting}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {running ? 'Running...' : '▶ Run'}
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={running || submitting}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? 'Submitting...' : '↑ Submit'}
+                  </button>
+                </div>
+              </>
+            )}
 
             {error && (
               <div className="bg-red-50 text-red-600 px-4 py-2.5 rounded-lg text-sm">

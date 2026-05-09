@@ -26,17 +26,59 @@ interface DashboardData {
   availableProblems: { id: number; title: string }[]
 }
 
+function GuestDashboard() {
+  return (
+    <div>
+      <Navbar />
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to CodeRunner</h1>
+          <p className="text-gray-500 mb-8 max-w-md mx-auto">
+            Sign in to track your progress, view submissions, and access your personalized dashboard.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/login"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/register"
+              className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-6 py-2.5 rounded-lg transition"
+            >
+              Register
+            </Link>
+          </div>
+          <div className="mt-8">
+            <Link href="/problems" className="text-blue-600 hover:text-blue-700 font-medium">
+              → Browse problems
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [userName, setUserName] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isGuest, setIsGuest] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
-      router.push('/login')
+      setIsGuest(true)
+      setLoading(false)
       return
     }
 
@@ -62,6 +104,8 @@ export default function DashboardPage() {
     }
     load()
   }, [router])
+
+  if (isGuest) return <GuestDashboard />
 
   if (loading) {
     return (

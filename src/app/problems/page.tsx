@@ -25,14 +25,10 @@ export default function ProblemsPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
+    const headers: Record<string, string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
 
-    fetch('/api/problems', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch('/api/problems', { headers })
       .then(res => {
         if (!res.ok) throw new Error('Failed to load')
         return res.json()
@@ -44,7 +40,7 @@ export default function ProblemsPage() {
         setError(err.message)
       })
       .finally(() => setLoading(false))
-  }, [router])
+  }, [])
 
   const filteredProblems = useMemo(() => {
     return problems.filter(p => {
@@ -70,7 +66,6 @@ export default function ProblemsPage() {
 
         {/* Search & Filter Bar */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          {/* Search */}
           <div className="relative flex-1">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -84,7 +79,6 @@ export default function ProblemsPage() {
             />
           </div>
 
-          {/* Difficulty Filter */}
           <select
             value={difficultyFilter}
             onChange={e => setDifficultyFilter(e.target.value)}
@@ -96,7 +90,6 @@ export default function ProblemsPage() {
             <option value="HARD">Hard</option>
           </select>
 
-          {/* Language Filter */}
           <select
             value={languageFilter}
             onChange={e => setLanguageFilter(e.target.value)}

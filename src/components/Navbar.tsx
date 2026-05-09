@@ -53,11 +53,46 @@ export default function Navbar({ user: propUser }: NavbarProps) {
     router.push('/login')
   }
 
-  if (loading || !user) return null
-
   const linkClass = (path: string) =>
     `text-sm ${pathname === path ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'} transition`
 
+  if (loading) return null
+
+  // Guest nav — shown when not logged in
+  if (!user) {
+    return (
+      <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-14 items-center">
+            <div className="flex items-center gap-8">
+              <Link href="/problems" className="text-xl font-bold text-blue-600">
+                CodeRunner
+              </Link>
+              <div className="hidden sm:flex items-center gap-6">
+                <Link href="/problems" className={linkClass('/problems')}>Problems</Link>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/login"
+                className="text-sm text-gray-600 hover:text-blue-600 transition font-medium"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg transition font-medium"
+              >
+                Register
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+    )
+  }
+
+  // Logged-in nav
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import TestResults from '@/components/TestResults'
 
@@ -18,16 +19,47 @@ interface SubmissionData {
   testResults: any[]
 }
 
+function GuestSubmissionDetail() {
+  return (
+    <div>
+      <Navbar />
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Submission Details</h1>
+          <p className="text-gray-500 mb-8 max-w-md mx-auto">
+            Sign in to view your submission details, code, and test results.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/login"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg transition"
+            >
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
 export default function SubmissionDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [submission, setSubmission] = useState<SubmissionData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isGuest, setIsGuest] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
-      router.push('/login')
+      setIsGuest(true)
+      setLoading(false)
       return
     }
 
@@ -44,6 +76,8 @@ export default function SubmissionDetailPage({ params }: { params: { id: string 
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [params.id, router])
+
+  if (isGuest) return <GuestSubmissionDetail />
 
   if (loading) {
     return (
